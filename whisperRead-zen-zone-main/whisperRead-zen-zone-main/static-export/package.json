@@ -1,0 +1,9 @@
+{
+  "name": "whisperread-static",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npx http-server . -p 5173 -c-1",
+    "serve": "npx serve ."
+  }
+}

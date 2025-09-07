@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>WhisperRead — Reader (Static)</title>
+    <link rel="canonical" href="https://whisperread.com/reader.html" />
+    <meta property="og:url" content="https://whisperread.com/reader.html" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="min-h-screen bg-gradient-to-b from-white to-sky-50 dark:from-slate-900 dark:to-slate-800 text-slate-900 dark:text-slate-100"
+  >
+    <header class="max-w-5xl mx-auto p-6 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <img
+          src="assets/whisperread-logo.svg"
+          alt="WhisperRead"
+          class="h-12 w-auto"
+        />
+        <div>
+          <h1 class="text-2xl font-extrabold">WhisperRead — Reader</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400">
+            Upload a PDF to view. Text extraction and TTS are simple static
+            approximations.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <a
+          href="index.html"
+          class="inline-flex items-center gap-2 rounded-md px-3 py-2 bg-slate-100"
+          >Home</a
+        >
+      </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto p-6">
+      <section class="bg-white/80 dark:bg-slate-900/60 rounded-2xl p-6 shadow">
+        <h2 class="text-lg font-semibold mb-2">Upload PDF</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Choose a PDF to preview in your browser. For full PDF text extraction,
+          a local build with pdf.js is recommended.
+        </p>
+
+        <div
+          id="dropArea"
+          class="mt-4 rounded border-dashed border-2 border-slate-200 p-6 text-center"
+        >
+          <input
+            id="fileInput"
+            type="file"
+            accept="application/pdf"
+            class="hidden"
+          />
+          <p class="text-sm">
+            Drag & drop a PDF here, or
+            <button id="browseBtn" class="text-sky-600 underline">
+              browse
+            </button>
+          </p>
+        </div>
+
+        <div id="viewerWrap" class="mt-6">
+          <iframe
+            id="pdfViewer"
+            class="w-full h-[70vh] border rounded"
+            src=""
+            title="PDF viewer"
+          ></iframe>
+        </div>
+
+        <div class="mt-4 flex gap-2">
+          <button id="readBtn" class="px-4 py-2 rounded bg-sky-500 text-white">
+            Read Selected
+          </button>
+          <button id="stopBtn" class="px-4 py-2 rounded border">Stop</button>
+        </div>
+
+        <p class="mt-3 text-xs text-slate-500">
+          Tip: Select any visible text in the PDF viewer (if your browser allows
+          selection) then click "Read Selected". Browser TTS will read the
+          selected text.
+        </p>
+      </section>
+    </main>
+
+    <script>
+      const BASE_SITE = "https://whisperread.com";
+      const drop = document.getElementById("dropArea");
+      const fileInput = document.getElementById("fileInput");
+      const browse = document.getElementById("browseBtn");
+      const viewer = document.getElementById("pdfViewer");
+      const readBtn = document.getElementById("readBtn");
+      const stopBtn = document.getElementById("stopBtn");
+
+      browse.addEventListener("click", () => fileInput.click());
+
+      drop.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        drop.classList.add("bg-slate-50");
+      });
+      drop.addEventListener("dragleave", () => {
+        drop.classList.remove("bg-slate-50");
+      });
+      drop.addEventListener("drop", (e) => {
+        e.preventDefault();
+        drop.classList.remove("bg-slate-50");
+        const f = e.dataTransfer.files[0];
+        if (f && f.type === "application/pdf") openPdfFile(f);
+      });
+
+      fileInput.addEventListener("change", (e) => {
+        const f = e.target.files[0];
+        if (f) openPdfFile(f);
+      });
+
+      function openPdfFile(file) {
+        const url = URL.createObjectURL(file);
+        viewer.src = url;
+      }
+
+      // Simple TTS: read selected text in the top-level window (user may need to select text in the embed)
+      function getSelectedText() {
+        try {
+          const s = window.getSelection();
+          if (s && s.toString().trim()) return s.toString().trim();
+
+          // try iframe selection
+          const iframe = document.getElementById("pdfViewer");
+          if (iframe && iframe.contentWindow) {
+            try {
+              const sel =
+                iframe.contentWindow.getSelection &&
+                iframe.contentWindow.getSelection();
+              if (sel && sel.toString().trim()) return sel.toString().trim();
+            } catch (e) {
+              // cross-origin or built-in viewer may block access
+            }
+          }
+        } catch (e) {
+          // ignore
+        }
+        return "";
+      }
+
+      readBtn.addEventListener("click", () => {
+        const text = getSelectedText();
+        if (!text) {
+          alert("Select text in the viewer or page to read.");
+          return;
+        }
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 1;
+        speechSynthesis.cancel();
+        speechSynthesis.speak(utter);
+      });
+
+      stopBtn.addEventListener("click", () => speechSynthesis.cancel());
+    </script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="360" height="120" viewBox="0 0 360 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradBrand" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f472d0"/>
+      <stop offset="50%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="gradText" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="50%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Icon container -->
+  <g transform="translate(12,12)">
+    <rect x="0" y="0" rx="16" ry="16" width="104" height="104" fill="url(#gradBrand)" filter="url(#softShadow)"/>
+    <!-- Whisper/wave mark -->
+    <g transform="translate(22,22)" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round">
+      <path d="M0,42 C8,26 16,26 24,42 C32,58 40,58 48,42 C56,26 64,26 72,42" opacity="0.55"/>
+      <path d="M6,42 C12,30 18,30 24,42 C30,54 36,54 42,42 C48,30 54,30 60,42" opacity="0.85"/>
+    </g>
+  </g>
+
+  <!-- Wordmark -->
+  <g transform="translate(140,78)">
+    <text x="0" y="0" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial" font-weight="800" font-size="42" fill="url(#gradText)">
+      WhisperRead
+    </text>
+  </g>
+</svg>
